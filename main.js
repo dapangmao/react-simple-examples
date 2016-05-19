@@ -25,7 +25,7 @@ import { connect, Provider } from 'react-redux'
 
 // 2nd level reducer
 // Here, `state` refers to the array of todo objects
-const todos = (state = [], action) => {
+function todos(state = [], action) {
   console.log("todos reducer called");
   switch (action.type) {
     // Returns a new array of todos, containing the added todo as described by `action`.
@@ -48,12 +48,12 @@ const todos = (state = [], action) => {
     default:
       return state;
   }
-};
+}
 
 // 2nd level reducer
 // Here, `state` refers to a simple configuration string (enum/atom)
 // Remember, we are only returning the state we are concerned with
-const visibilityFilter = (state = 'SHOW_ALL', action) => {
+function visibilityFilter(state = 'SHOW_ALL', action) {
   console.log("visibilityFilter reducer called");
   switch (action.type) {
     case 'SET_VISIBILITY_FILTER':
@@ -61,11 +61,11 @@ const visibilityFilter = (state = 'SHOW_ALL', action) => {
     default:
       return state;
   }
-};
+}
 
 // 3rd level reducer.
 // Here, `state` refers to a single todo object.
-const todo = (state, action) => {
+function todo(state, action) {
   console.log("todo reducer called");
   // Remember, no mutation.
   // Initial state is considered (or not, in the ADD_TODO case),
@@ -96,7 +96,7 @@ const todo = (state, action) => {
     default:
       return state;
   }
-};
+}
 
 ////////////////////////////////////////////////
 //
@@ -347,7 +347,7 @@ const getVisibleTodos = (todos, filter) => {
 
 //////////////////////////////////////////////////
 //
-// Root reducer, root component, initial render
+// Root reducer, root component, initial
 //
 
 
@@ -380,7 +380,7 @@ const TodoApp = () => {
 // See how <Provider> works here:
 // https://github.com/rackt/react-redux/blob/master/src/components/Provider.js
 
-ReactDOM.render(
+ReactDOM(
   <Provider store={store}>
     <TodoApp />
   </Provider>,
