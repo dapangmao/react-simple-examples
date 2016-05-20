@@ -42,7 +42,6 @@ function todos(state = [], action) {
       return state
   }
 }
-
 // 2nd level reducer
 // Here, `state` refers to a simple configuration string (enum/atom)
 // Remember, we are only returning the state we are concerned with
@@ -61,7 +60,6 @@ function todo(state, action) {
   // Remember, no mutation.
   // Initial state is considered (or not, in the ADD_TODO case),
   // and used to construct a new state object, always.
-
   switch (action.type) {
     case 'ADD_TODO':
       console.log('todo ADD_TODO')
@@ -76,7 +74,6 @@ function todo(state, action) {
       if (state.id !== action.id) {
         return state
       }
-
       // ... below is ES7 "Object Rest Destructuring"
       // https://github.com/sebmarkbage/ecmascript-rest-spread/blob/master/Spread.md
       // Think of it as "and the rest", or "override these object properties"
@@ -96,7 +93,8 @@ function TodoList({ todos, onTodoClick }) {
     {todos.map(todo =>
       <Todo
         key={todo.id}
-        {...todo}
+        text={todo.text}  // better ways is ...todo
+        completed={todo.completed}
         onClick={() => onTodoClick(todo.id)}
       />
     )}
@@ -138,7 +136,6 @@ const VisibleTodoList = connect(
   )(TodoList)
 //------------------------------------------------------------------------------
 
-
 function Todo({ onClick, completed, text }) {
   return (
     <li onClick={onClick}
@@ -148,8 +145,6 @@ function Todo({ onClick, completed, text }) {
     </li>
   )
 }
-
-
 //------------------------------------------------------------------------------
 
 function Link({ active, children, onClick }) {
@@ -166,7 +161,6 @@ function Link({ active, children, onClick }) {
     </a>
   )
 }
-
 
 function mapStateToFilterLinkProps(state, ownProps) {
   return {
