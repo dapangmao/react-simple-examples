@@ -1,23 +1,13 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
 import { combineReducers, createStore } from 'redux'
 import { connect, Provider } from 'react-redux'
-
-
 
 // "Getting Started with Redux" (by Dan Abramov)
 // https://egghead.io/series/getting-started-with-redux
 
 // This file on JSBin (by Jesse Buchanan):
 // http://jsbin.com/wuwezo/74/edit?js,console,output
-
-////////////////////////////////////////////////
-//
-// Imports
-//
-
-
-
 ////////////////////////////////////////////////
 //
 // Reducers (except root, see bottom)
@@ -26,27 +16,27 @@ import { connect, Provider } from 'react-redux'
 // 2nd level reducer
 // Here, `state` refers to the array of todo objects
 function todos(state = [], action) {
-  console.log("todos reducer called");
+  console.log("todos reducer called")
   switch (action.type) {
     // Returns a new array of todos, containing the added todo as described by `action`.
     // The new todo is constructed by delegating to the `todo` reducer.
     case 'ADD_TODO':
-      console.log('todos ADD_TODO');
+      console.log('todos ADD_TODO')
       // ... below is ES6 "spread operator" (arrays only)
       return [
         ...state,
         todo(undefined, action)
-      ];
+      ]
     // Returns a new array of todos, with an individual todo's completed status
     // toggled as identified by `action.id`.
     // Must operate on entire list (seems wrong somehow).
     case 'TOGGLE_TODO':
-      console.log('todos TOGGLE_TODO');
+      console.log('todos TOGGLE_TODO')
       return state.map(t =>
         todo(t, action)
-      );
+      )
     default:
-      return state;
+      return state
   }
 }
 
@@ -54,36 +44,34 @@ function todos(state = [], action) {
 // Here, `state` refers to a simple configuration string (enum/atom)
 // Remember, we are only returning the state we are concerned with
 function visibilityFilter(state = 'SHOW_ALL', action) {
-  console.log("visibilityFilter reducer called");
-  switch (action.type) {
-    case 'SET_VISIBILITY_FILTER':
-      return action.filter;
-    default:
-      return state;
-  }
+  console.log("visibilityFilter reducer called")
+  if (action.type === 'SET_VISIBILITY_FILTER') {
+      return action.filter
+    }
+  return state
 }
 
 // 3rd level reducer.
 // Here, `state` refers to a single todo object.
 function todo(state, action) {
-  console.log("todo reducer called");
+  console.log("todo reducer called")
   // Remember, no mutation.
   // Initial state is considered (or not, in the ADD_TODO case),
   // and used to construct a new state object, always.
 
   switch (action.type) {
     case 'ADD_TODO':
-      console.log('todo ADD_TODO');
+      console.log('todo ADD_TODO')
       return {
         id: action.id,
         text: action.text,
         completed: false
-      };
+      }
     case 'TOGGLE_TODO':
-      console.log('todo TOGGLE_TODO');
+      console.log('todo TOGGLE_TODO')
       // Bail out if the action is for a different todo than the one passed in.
       if (state.id !== action.id) {
-        return state;
+        return state
       }
 
       // ... below is ES7 "Object Rest Destructuring"
@@ -92,9 +80,9 @@ function todo(state, action) {
       return Object.assign({}, state, {completed: !state.completed})
       //   ...state,
       //   completed: !state.completed
-      // };
+      // }
     default:
-      return state;
+      return state
   }
 }
 
@@ -108,7 +96,8 @@ function todo(state, action) {
 // https://facebook.github.io/react/blog/2015/09/10/react-v0.14-rc1.html#stateless-function-components
 // Notice the curlybraces in the parameter list. This is destructuring
 // `props` (e.g. filter = props.filter, children = props.children)
-const TodoList = ({ todos, onTodoClick }) => (
+function TodoList({ todos, onTodoClick }) {
+  return (
   <ul>
     {todos.map(todo =>
       <Todo
@@ -118,35 +107,35 @@ const TodoList = ({ todos, onTodoClick }) => (
       />
     )}
   </ul>
-);
+)}
 
 
-const Todo = ({ onClick, completed, text }) => {
+function Todo({ onClick, completed, text }) {
   return (
     <li onClick={onClick}
       style={{textDecoration: completed ? 'line-through' : 'none'}}
     >
       {text}
     </li>
-  );
-};
+  )
+}
 
-const Link = ({ active, children, onClick }) => {
+function Link({ active, children, onClick }) {
   if (active)
-    return <span>{children}</span>;
+    return <span>{children}</span>
   return (
     <a href='#'
        onClick={e => {
-         e.preventDefault();
-         onClick();
+         e.preventDefault()
+         onClick()
        }}
     >
       {children}
     </a>
-  );
-};
+  )
+}
 
-const Footer = () => {
+function Footer() {
   return (
     <p>
       Show:
@@ -159,13 +148,13 @@ const Footer = () => {
       {' '}
       <FilterLink filter='SHOW_COMPLETED'>Completed</FilterLink>
     </p>
-  );
-};
+  )
+}
 
 // Intentionally not `const` here.
 // We will override AddTodo later with a connected component.
-let AddTodo = ({ dispatch }) => {
-  let input;
+function AddTodo({ dispatch }) {
+  let input
 
   return (
     <div>
@@ -174,17 +163,17 @@ let AddTodo = ({ dispatch }) => {
 
         // n.b. no `this` available in a functional/stateless component.
         // Here, we're making a closure over `input`, defined above.
-        input = node;
+        input = node
       }} />
       <button onClick={() => {
-        dispatch(addTodo(input.value));
-        input.value = '';
+        dispatch(addTodo(input.value))
+        input.value = ''
       }}>
         Add todo
       </button>
     </div>
-  );
-};
+  )
+}
 
 ////////////////////////////////////////////////
 //
@@ -193,40 +182,40 @@ let AddTodo = ({ dispatch }) => {
 
 // This takes Redux state, and returns the props needed
 // for the presentational component.
-const mapStateToTodoListProps = (state) => {
-  console.log(`mapStateToTodoListProps(): state.todos = ${state.todos}`);
+function mapStateToTodoListProps(state) {
+  console.log(`mapStateToTodoListProps(): state.todos = ${state.todos}`)
   return {
     todos: getVisibleTodos(
       state.todos,
       state.visibilityFilter
     )
-  };
-};
+  }
+}
 
 // This takes the store's dispatch method, and returns the
 // callbacks props needed for the presentational component.
-const mapDispatchToTodoListProps = (dispatch) => {
+function mapDispatchToTodoListProps(dispatch) {
   return {
     onTodoClick: (id) => {
-      dispatch(toggleTodo(id));
+      dispatch(toggleTodo(id))
     }
-  };
-};
+  }
+}
 
-const mapStateToFilterLinkProps = (state, ownProps) => {
+function mapStateToFilterLinkProps(state, ownProps) {
   return {
     active: ownProps.filter === state.visibilityFilter
-  };
-};
+  }
+}
 
 const mapDispatchToFilterLinkProps = (dispatch, ownProps) => {
   return {
     onClick: () => {
-      console.log('FilterLink onClick');
-      dispatch(setVisibilityFilter(ownProps.filter));
+      console.log('FilterLink onClick')
+      dispatch(setVisibilityFilter(ownProps.filter))
     }
-  };
-};
+  }
+}
 
 ////////////////////////////////////////////////
 //
@@ -260,23 +249,23 @@ const mapDispatchToFilterLinkProps = (dispatch, ownProps) => {
 
 const VisibleTodoList = connect(
   mapStateToTodoListProps, mapDispatchToTodoListProps
-)(TodoList);
+)(TodoList)
 
 const FilterLink = connect(
   mapStateToFilterLinkProps,
   mapDispatchToFilterLinkProps
-)(Link);
+)(Link)
 
 // Default behavior of `connect` (with 0 parameters):
 //   Do not subscribe to any stores, inject `dispatch` as prop.
 // This shorthand is equivalent to AddTodoHardWay, demonstrated below.
-AddTodo = connect()(AddTodo);
+AddTodo = connect()(AddTodo)
 
 // AddTodoTheHardWay = connect(
 //   state => {
 //     // AddToDo doesn't have any state to be mapped to props.
 //     // Could have just specified null here instead of an anon fn.
-//     return {};
+//     return {}
 //   },
 //   dispatch => {
 //     // A bit hard to follow here.
@@ -287,9 +276,9 @@ AddTodo = connect()(AddTodo);
 //     // In this case, we're just taking dispatch, and returning
 //     //  {dispatch: dispatch}
 //
-//     return { dispatch };
+//     return { dispatch }
 //   }
-// )(AddTodo);
+// )(AddTodo)
 
 
 ////////////////////////////////////////////////
@@ -304,45 +293,45 @@ AddTodo = connect()(AddTodo);
 // (?) Closures mean I can keep state
 // (?) Async operations are handled here!
 
-let nextToDoId = 0; // global :shrug:
-const addTodo = (text) => {
+let nextToDoId = 0 // global :shrug:
+function addTodo(text) {
   return {
     type: 'ADD_TODO',
     id: nextToDoId++,
     text
-  };
-};
+  }
+}
 
-const setVisibilityFilter = (filter) => {
+function setVisibilityFilter(filter) {
   return {
     type: 'SET_VISIBILITY_FILTER',
     filter
-  };
-};
+  }
+}
 
-const toggleTodo = (id) => {
+function toggleTodo(id) {
   return {
     type: 'TOGGLE_TODO',
     id
-  };
-};
+  }
+}
 
 ////////////////////////////////////////////////
 //
 // Helpers (just a filter, really)
-//
+//``
 
-const getVisibleTodos = (todos, filter) => {
-  console.log(`getVisibleTodos: todos=${todos} filter=${filter}`);
+function getVisibleTodos(todos, filter) {
+  console.log(`getVisibleTodos: todos=${todos} filter=${filter}`)
   switch (filter) {
     case 'SHOW_ALL':
-      return todos;
+      return todos
     case 'SHOW_COMPLETED':
-      return todos.filter(t => t.completed);
+      return todos.filter(t => t.completed)
     case 'SHOW_ACTIVE':
-      return todos.filter(t => !t.completed);
+      return todos.filter(t => !t.completed)
   }
-};
+}
 
 
 //////////////////////////////////////////////////
@@ -356,22 +345,22 @@ const todoApp = combineReducers({
   // n.b. following syntax is ES6 Object Initializer (shorthand property names)
   todos,              // todos: todos,
   visibilityFilter    // visibilityFilter: visibilityFilter
-});
+})
 
 // Create the Redux store from the root reducer.
-const store = createStore(todoApp);
+const store = createStore(todoApp)
 
 // Look at how simple the application is now!
 // The top level React component needs no props.
-const TodoApp = () => {
+function TodoApp() {
   return (
     <div>
       <AddTodo />
       <VisibleTodoList />
       <Footer />
     </div>
-  );
-};
+  )
+}
 
 // react-redux <Provider> uses the React Context feature (`getChildContext`,
 // `childContextTypes`) to inject the store, automatically subscribe and
@@ -380,9 +369,9 @@ const TodoApp = () => {
 // See how <Provider> works here:
 // https://github.com/rackt/react-redux/blob/master/src/components/Provider.js
 
-ReactDOM(
+render(
   <Provider store={store}>
     <TodoApp />
   </Provider>,
   document.getElementById('root')
-);
+)
