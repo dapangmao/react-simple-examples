@@ -12,19 +12,14 @@ let nextToDoId = 0 // global :shrug:
 // This file on JSBin (by Jesse Buchanan):
 // http://jsbin.com/wuwezo/74/edit?js,console,output
 ////////////////////////////////////////////////
-//
-// Reducers (except root, see bottom)
-//
 
 // 2nd level reducer
 // Here, `state` refers to the array of todo objects
 function todos(state = [], action) {
-  console.log("todos reducer called")
   switch (action.type) {
     // Returns a new array of todos, containing the added todo as described by `action`.
     // The new todo is constructed by delegating to the `todo` reducer.
     case 'ADD_TODO':
-      console.log('todos ADD_TODO')
       // ... below is ES6 "spread operator" (arrays only)
       return [
         ...state,
@@ -34,7 +29,6 @@ function todos(state = [], action) {
     // toggled as identified by `action.id`.
     // Must operate on entire list (seems wrong somehow).
     case 'TOGGLE_TODO':
-      console.log('todos TOGGLE_TODO')
       return state.map(t =>
         todo(t, action)
       )
@@ -42,11 +36,11 @@ function todos(state = [], action) {
       return state
   }
 }
+
 // 2nd level reducer
 // Here, `state` refers to a simple configuration string (enum/atom)
 // Remember, we are only returning the state we are concerned with
 function visibilityFilter(state = 'SHOW_ALL', action) {
-  console.log("visibilityFilter reducer called")
   if (action.type === 'SET_VISIBILITY_FILTER') {
       return action.filter
     }
@@ -60,6 +54,7 @@ function todo(state, action) {
   // Remember, no mutation.
   // Initial state is considered (or not, in the ADD_TODO case),
   // and used to construct a new state object, always.
+
   switch (action.type) {
     case 'ADD_TODO':
       console.log('todo ADD_TODO')
@@ -86,55 +81,55 @@ function todo(state, action) {
   }
 }
 
+// Top level reducer.
+const todoApp = combineReducers({
+  // n.b. following syntax is ES6 Object Initializer (shorthand property names)
+  todos,              // todos: todos,
+  visibilityFilter    // visibilityFilter: visibilityFilter
+})
+
 //------------------------------------------------------------------------------
-function TodoList({ todos, onTodoClick }) {
+function TodoList({todos, onTodoClick, dispatch}) {
   return (
   <ul>
     {todos.map(todo =>
       <Todo
         key={todo.id}
-        text={todo.text}  // better ways is ...todo
-        completed={todo.completed}
-        onClick={() => onTodoClick(todo.id)}
+        {...todo}
+        onClick={() => dispatch({'type': 'TOGGLE_TODO', 'id': todo.id})}
       />
     )}
   </ul>
 )}
 
-function getVisibleTodos(todos, filter) {
+function mapStateToTodoListProps(state) {
+  // console.log(`mapStateToTodoListProps(): state.todos = ${state.todos}`)
+  let filter = state.visibilityFilter
+  let todos = state.todos
   switch (filter) {
     case 'SHOW_ALL':
-      return todos
+      return {'todos': todos}
     case 'SHOW_COMPLETED':
-      return todos.filter(t => t.completed)
+      return {'todos': todos.filter(t => t.completed)}
     case 'SHOW_ACTIVE':
-      return todos.filter(t => !t.completed)
+      return {'todos': todos.filter(t => !t.completed)}
   }
 }
 
-function mapStateToTodoListProps(state) {
-  console.log(`mapStateToTodoListProps(): state.todos = ${state.todos}`)
-  return {
-    todos: getVisibleTodos(
-      state.todos,
-      state.visibilityFilter
-    )
-  }
-}
-
-function mapDispatchToTodoListProps(dispatch) {
-  return {
-    onTodoClick: (id) => {
-      dispatch({'type': 'TOGGLE_TODO', 'id': id})
-      }
-    }
-  }
+// function mapDispatchToTodoListProps(dispatch) {
+//   return {
+//     onTodoClick: (id) => {
+//       dispatch({'type': 'TOGGLE_TODO', 'id': id})
+//       }
+//     }
+//   }
 
 const VisibleTodoList = connect(
-    mapStateToTodoListProps,
-    mapDispatchToTodoListProps
+    mapStateToTodoListProps
+    // mapDispatchToTodoListProps
   )(TodoList)
 //------------------------------------------------------------------------------
+
 
 function Todo({ onClick, completed, text }) {
   return (
@@ -161,6 +156,7 @@ function Link({ active, children, onClick }) {
     </a>
   )
 }
+
 
 function mapStateToFilterLinkProps(state, ownProps) {
   return {
@@ -202,7 +198,6 @@ function Footer() {
 
 function AddTodo({ dispatch }) {
   let input
-
   return (
     <div>
       <input ref={node => {
@@ -225,14 +220,6 @@ function AddTodo({ dispatch }) {
 const AddTodo2 = connect()(AddTodo)
 
 //------------------------------------------------------------------------------
-
-
-// Top level reducer.
-const todoApp = combineReducers({
-  // n.b. following syntax is ES6 Object Initializer (shorthand property names)
-  todos,              // todos: todos,
-  visibilityFilter    // visibilityFilter: visibilityFilter
-})
 
 // Create the Redux store from the root reducer.
 const store = createStore(todoApp)
