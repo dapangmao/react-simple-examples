@@ -208,7 +208,7 @@ function mapStateToFilterLinkProps(state, ownProps) {
   }
 }
 
-const mapDispatchToFilterLinkProps = (dispatch, ownProps) => {
+function mapDispatchToFilterLinkProps(dispatch, ownProps) {
   return {
     onClick: () => {
       console.log('FilterLink onClick')
@@ -248,7 +248,8 @@ const mapDispatchToFilterLinkProps = (dispatch, ownProps) => {
 // by hand.
 
 const VisibleTodoList = connect(
-  mapStateToTodoListProps, mapDispatchToTodoListProps
+  mapStateToTodoListProps,
+  mapDispatchToTodoListProps
 )(TodoList)
 
 const FilterLink = connect(
