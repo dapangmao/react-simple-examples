@@ -4,14 +4,28 @@ import { connect } from "react-redux"
 
 let nextToDoId = 0 // global :shrug:
 
-function TodoList({todos, dispatch}) {
+//------------------------------------------------------------------------------
+function Todo({id, completed, text, dispatch}) {
+  return (
+    <li onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
+      style={{textDecoration: completed ? "line-through" : "none"}}
+    >
+      {text}
+    </li>
+  )
+}
+
+const Todo2 = connect()(Todo)
+//------------------------------------------------------------------------------
+
+function TodoList({todos}) {
   return (
   <ul>
     {todos.map(todo =>
-      <Todo
+      <Todo2
         key={todo.id}
         {...todo}
-        onClick={() => dispatch({"type": "TOGGLE_TODO", "id": todo.id})}
+
       />
     )}
   </ul>
@@ -20,23 +34,26 @@ function TodoList({todos, dispatch}) {
 TodoList.propTypes = {todos: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired}
 
-
-//------------------------------------------------------------------------------
-
-function Todo({ onClick, completed, text }) {
-  return (
-    <li onClick={onClick}
-      style={{textDecoration: completed ? "line-through" : "none"}}
-    >
-      {text}
-    </li>
-  )
+function mapStateToTodoListProps(state) {
+  let filter = state.visibilityFilter
+  let todos = state.todos
+  switch (filter) {
+    case "SHOW_ALL":
+      return {"todos": todos}
+    case "SHOW_COMPLETED":
+      return {"todos": todos.filter(t => t.completed)}
+    case "SHOW_ACTIVE":
+      return {"todos": todos.filter(t => !t.completed)}
+  }
 }
+
+const VisibleTodoList = connect(mapStateToTodoListProps)(TodoList)
+
 //------------------------------------------------------------------------------
 // acitve is defined by the connector
 // children and dispatch defined by global
 // filter is defined by footer
-function Link({ active, children, dispatch, filter}) {
+function Link({ active, children, dispatch, filter }) {
   if (active)
     return <span>{children}</span>
   return (
@@ -57,20 +74,16 @@ function mapStateToFilterLinkProps(state, props) {
   }
 }
 
-const FilterLink = connect(
-  mapStateToFilterLinkProps
-)(Link)
+const FilterLink = connect(mapStateToFilterLinkProps)(Link)
 
 function Footer() {
   return (
     <p>
-      Show:
+      <b>Show:</b>
       {" "}
-      <FilterLink
-        filter="SHOW_ALL">All</FilterLink>
+      <FilterLink filter="SHOW_ALL">All</FilterLink>
       {" "}
-      <FilterLink
-        filter="SHOW_ACTIVE">Active</FilterLink>
+      <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>
       {" "}
       <FilterLink filter="SHOW_COMPLETED">Completed</FilterLink>
     </p>
@@ -78,17 +91,14 @@ function Footer() {
 }
 
 //------------------------------------------------------------------------------
-
+// This is a newer 0.14 syntax where ref can be a callback.
+// n.b. no `this` available in a functional/stateless component.
+// Here, we"re making a closure over `input`, defined above.
 function AddTodo({ dispatch }) {
   let input
   return (
     <div>
-      <input ref={node => {
-        // This is a newer 0.14 syntax where ref can be a callback.
-        // n.b. no `this` available in a functional/stateless component.
-        // Here, we"re making a closure over `input`, defined above.
-        input = node
-      }} />
+      <input ref={node => {input = node}} />
       <button onClick={() => {
         dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": input.value})
         input.value = ""
@@ -98,27 +108,8 @@ function AddTodo({ dispatch }) {
     </div>
   )
 }
-
-function mapStateToTodoListProps(state) {
-  // console.log(`mapStateToTodoListProps(): state.todos = ${state.todos}`)
-  let filter = state.visibilityFilter
-  let todos = state.todos
-  switch (filter) {
-    case "SHOW_ALL":
-      return {"todos": todos}
-    case "SHOW_COMPLETED":
-      return {"todos": todos.filter(t => t.completed)}
-    case "SHOW_ACTIVE":
-      return {"todos": todos.filter(t => !t.completed)}
-  }
-}
-
-
-const VisibleTodoList = connect(
-    mapStateToTodoListProps
-  )(TodoList)
-
 const AddTodo2 = connect()(AddTodo)
+//------------------------------------------------------------------------------
 
 function TodoApp() {
   return (
@@ -131,4 +122,3 @@ function TodoApp() {
 }
 
 export default TodoApp
-//------------------------------------------------------------------------------
