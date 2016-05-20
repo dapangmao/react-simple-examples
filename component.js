@@ -25,7 +25,6 @@ function TodoList({todos}) {
       <Todo2
         key={todo.id}
         {...todo}
-
       />
     )}
   </ul>
@@ -53,17 +52,18 @@ const VisibleTodoList = connect(mapStateToTodoListProps)(TodoList)
 // acitve is defined by the connector
 // children and dispatch defined by global
 // filter is defined by footer
-function Link({ active, children, dispatch, filter }) {
+function Link({ active, dispatch, filter }) {
+  let str = filter.split("_")[1]
   if (active)
-    return <span>{children}</span>
+    return <span>{str}</span>
   return (
     <a href="#"
        onClick={e => {
          e.preventDefault()
-         dispatch({"type": "SET_VISIBILITY_FILTER", "filter": filter })
+         dispatch({ "type": "SET_VISIBILITY_FILTER", "filter": filter })
        }}
     >
-      {children}
+      {str}
     </a>
   )
 }
@@ -81,11 +81,11 @@ function Footer() {
     <p>
       <b>Show:</b>
       {" "}
-      <FilterLink filter="SHOW_ALL">All</FilterLink>
+      <FilterLink filter="SHOW_ALL"/>
       {" "}
-      <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>
+      <FilterLink filter="SHOW_ACTIVE"/>
       {" "}
-      <FilterLink filter="SHOW_COMPLETED">Completed</FilterLink>
+      <FilterLink filter="SHOW_COMPLETED"/>
     </p>
   )
 }

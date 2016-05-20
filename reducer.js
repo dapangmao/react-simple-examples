@@ -1,5 +1,6 @@
 import { combineReducers } from "redux"
 
+// 2nd level reducer
 function todos(state = [], action) {
   switch (action.type) {
     // Returns a new array of todos, containing the added todo as described by `action`.
@@ -22,7 +23,6 @@ function todos(state = [], action) {
   }
 }
 
-// 2nd level reducer
 // Here, `state` refers to a simple configuration string (enum/atom)
 // Remember, we are only returning the state we are concerned with
 function visibilityFilter(state = "SHOW_ALL", action) {
@@ -52,9 +52,8 @@ function todo(state, action) {
       if (state.id !== action.id) {
         return state
       }
-      // ... below is ES7 "Object Rest Destructuring"
+      // ES7 has "Object Rest Destructuring"
       // https://github.com/sebmarkbage/ecmascript-rest-spread/blob/master/Spread.md
-      // Think of it as "and the rest", or "override these object properties"
       return Object.assign({}, state, {completed: !state.completed})
     default:
       return state
@@ -63,9 +62,8 @@ function todo(state, action) {
 
 // Top level reducer.
 const todoApp = combineReducers({
-  // n.b. following syntax is ES6 Object Initializer (shorthand property names)
-  todos,              // todos: todos,
-  visibilityFilter    // visibilityFilter: visibilityFilter
+  todos,
+  visibilityFilter
 })
 
 export default todoApp

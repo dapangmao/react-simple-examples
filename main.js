@@ -17,14 +17,9 @@ import todoApp from "./reducer"
 // Create the Redux store from the root reducer.
 const store = createStore(todoApp)
 
-// Look at how simple the application is now!
-// The top level React component needs no props.
-
-
 // react-redux <Provider> uses the React Context feature (`getChildContext`,
 // `childContextTypes`) to inject the store, automatically subscribe and
 // unsubscribe to it at the correct React lifecycle hooks (e.g. `componentDidMount`).
-//
 // See how <Provider> works here:
 // https://github.com/rackt/react-redux/blob/master/src/components/Provider.js
 
