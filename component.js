@@ -17,7 +17,7 @@ function Todo({id, completed, text, dispatch}) {
 const Todo2 = connect()(Todo)
 //------------------------------------------------------------------------------
 
-function TodoList({todos}) {
+function TodoList({ todos }) {
   return (
   <ul>
     {todos.map(todo =>
@@ -51,9 +51,9 @@ const VisibleTodoList = connect(mapStateToTodoListProps)(TodoList)
 // acitve is defined by the connector
 // children and dispatch defined by global
 // filter is defined by footer
-function Link({ active, dispatch, filter }) {
+function Link({ currentFilter, dispatch, filter }) {
   let str = filter.split("_")[1]
-  if (active)
+  if (currentFilter === filter)
     return <span>{str}</span>
   return (
     <a href="#"
@@ -67,13 +67,7 @@ function Link({ active, dispatch, filter }) {
   )
 }
 
-function mapStateToFilterLinkProps(state, props) {
-  return {
-    active: props.filter === state.visibilityFilter
-  }
-}
-
-const FilterLink = connect(mapStateToFilterLinkProps)(Link)
+const FilterLink = connect( (state) => ({currentFilter: state.visibilityFilter}) )(Link)
 
 function Footer() {
   return (
