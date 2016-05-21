@@ -3,7 +3,6 @@ import { connect } from "react-redux"
 
 
 let nextToDoId = 0 // global :shrug:
-
 //------------------------------------------------------------------------------
 function Todo({id, completed, text, dispatch}) {
   return (
@@ -111,7 +110,7 @@ function AddTodo({ dispatch }) {
 const AddTodo2 = connect()(AddTodo)
 //------------------------------------------------------------------------------
 
-function TodoApp() {
+export default function TodoApp() {
   return (
     <div>
       <AddTodo2 />
@@ -120,5 +119,3 @@ function TodoApp() {
     </div>
   )
 }
-
-export default TodoApp
