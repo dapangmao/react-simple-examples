@@ -1,16 +1,26 @@
 import React, {PropTypes} from "react"
 import { connect } from "react-redux"
-
+import AppBar from 'material-ui/AppBar';
+import {deepOrange500} from 'material-ui/styles/colors'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import FlatButton from 'material-ui/FlatButton'
+import {List, ListItem} from 'material-ui/List';
 
 let nextToDoId = 0 // global :shrug:
+
+
+
+
+
 //------------------------------------------------------------------------------
 function Todo({id, completed, text, dispatch}) {
   return (
-    <li onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
+    <ListItem onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
       style={{textDecoration: completed ? "line-through" : "none"}}
-    >
-      {text}
-    </li>
+
+      primaryText={text}
+      />
   )
 }
 
@@ -19,14 +29,14 @@ const Todo2 = connect()(Todo)
 
 function TodoList({ todos }) {
   return (
-  <ul>
+  <List>
     {todos.map(todo =>
       <Todo2
         key={todo.id}
         {...todo}
       />
     )}
-  </ul>
+  </List>
 )}
 
 TodoList.propTypes = {todos: PropTypes.array.isRequired,
@@ -92,24 +102,38 @@ function AddTodo({ dispatch }) {
   return (
     <div>
       <input ref={node => {input = node}} />
-      <button onClick={() => {
+      <FlatButton onClick={() => {
         dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": input.value})
         input.value = ""
-      }}>
-        Add todo
-      </button>
+      }}
+        label = 'Add todo'
+      />
     </div>
   )
 }
 const AddTodo2 = connect()(AddTodo)
 //------------------------------------------------------------------------------
+const muiTheme = getMuiTheme({
+  palette: {
+    accent1Color: deepOrange500
+  }
+})
+
 
 export default function TodoApp() {
   return (
+    <MuiThemeProvider muiTheme={muiTheme}>
+
     <div>
+      <AppBar
+        title="Title"
+        iconClassNameRight="muidocs-icon-navigation-expand-more"
+      />
       <AddTodo2 />
       <VisibleTodoList />
       <Footer />
     </div>
+
+    </MuiThemeProvider>
   )
 }
