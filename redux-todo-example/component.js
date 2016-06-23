@@ -5,12 +5,34 @@ import {deepOrange500} from 'material-ui/styles/colors'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import FlatButton from 'material-ui/FlatButton'
-import {List, ListItem} from 'material-ui/List';
+import {List, ListItem} from 'material-ui/List'
+import {Card, CardText} from 'material-ui/Card'
 
 let nextToDoId = 0 // global :shrug:
 
 
-
+// const CardExampleWithAvatar = () => (
+//   <Card>
+//     <CardHeader
+//       title="URL Avatar"
+//       subtitle="Subtitle"
+//       avatar="http://lorempixel.com/100/100/nature/"
+//     />
+//     <CardMedia
+//       overlay={<CardTitle title="Overlay title" subtitle="Overlay subtitle" />}
+//     >
+//       <img src="http://lorempixel.com/600/337/nature/" />
+//     </CardMedia>
+//     <CardTitle title="Card title" subtitle="Card subtitle" />
+//     <CardText>
+//       Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+//       Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
+//       Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
+//       Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+//     </CardText>
+//
+//   </Card>
+// );
 
 
 //------------------------------------------------------------------------------
@@ -123,17 +145,21 @@ const muiTheme = getMuiTheme({
 export default function TodoApp() {
   return (
     <MuiThemeProvider muiTheme={muiTheme}>
-
-    <div>
+    <Card>
       <AppBar
         title="Title"
         iconClassNameRight="muidocs-icon-navigation-expand-more"
       />
+      <CardText>
       <AddTodo2 />
       <VisibleTodoList />
+
       <Footer />
-    </div>
+      </CardText>
+
+    </Card>
 
     </MuiThemeProvider>
+
   )
 }

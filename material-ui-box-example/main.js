@@ -30,7 +30,7 @@ function Box_({ openStatus, dispatch }) {
   const muiTheme = getMuiTheme({
     palette: {
       accent1Color: deepOrange500
-    },
+    }
   })
 
   return (
