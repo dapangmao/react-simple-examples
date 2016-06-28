@@ -4,13 +4,11 @@ import { createStore, combineReducers } from "redux"
 import { Provider, connect} from "react-redux"
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import RaisedButton from 'material-ui/RaisedButton'
-import Dialog from 'material-ui/Dialog'
 import {deepOrange500} from 'material-ui/styles/colors'
 import FlatButton from 'material-ui/FlatButton'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-
-import {Step,Stepper,StepLabel} from 'material-ui/Stepper';
+import {Step, Stepper, StepLabel} from 'material-ui/Stepper';
 // import RaisedButton from 'material-ui/RaisedButton';
 
 injectTapEventPlugin()
@@ -110,18 +108,11 @@ function HorizontalLinearStepper_({ stepIndex, dispatch }) {
     )
   }
 
-const HorizontalLinearStepper = connect( (state) => ({"stepIndex": state.stepStore}) )(HorizontalLinearStepper_)
+const HorizontalLinearStepper = connect( (state) => ({"stepIndex":
+  state.stepStore}) )(HorizontalLinearStepper_)
 
 //-------------------------------------------------------------------
 
-
-
-// function boxStore(state = false, action) {
-//   if (action.type === "SET_POPUP") {
-//     return action.open
-//   }
-//   return state
-// }
 
 function stepStore(state = 0, action) {
   if (action.type === "INCREASE_STEP") {
@@ -136,14 +127,10 @@ function stepStore(state = 0, action) {
   return state
 }
 
-//
 const StepStore = combineReducers({
-  // boxStore
   stepStore
 })
 const store = createStore(StepStore)
-
-
 
 render(
   <Provider store={store}>
