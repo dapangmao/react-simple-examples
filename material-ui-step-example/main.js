@@ -9,15 +9,11 @@ import FlatButton from 'material-ui/FlatButton'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import {Step, Stepper, StepLabel} from 'material-ui/Stepper';
-// import RaisedButton from 'material-ui/RaisedButton';
-
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
+import TextField from 'material-ui/TextField';
+import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
 injectTapEventPlugin()
-
-
-/**
- * In this file, we create a React component
- * which incorporates components providedby material-ui.
- */
 
 
 function Box() {
@@ -27,25 +23,66 @@ function Box() {
     }
   })
 
+
   return (
     <MuiThemeProvider muiTheme={muiTheme}>
+    <Card>
+    <CardHeader
+      title="URL Avatar"
+      subtitle="Subtitle"
+      avatar="http://lorempixel.com/100/100/nature/"
+    />
+    <CardText>
         <div style={{textAlign: 'center', paddingTop: 200}}>
           <HorizontalLinearStepper/>
         </div>
-
+    </CardText>
+    </Card>
     </MuiThemeProvider>
   )
 }
 
-
 function getStepContent(stepIndex) {
+  const style = {
+    marginLeft: 20,
+  };
+
   switch (stepIndex) {
     case 0:
-      return 'Select campaign settings...';
+      return (
+        <p>
+          Select campaign settings. Campaign settings can include your budget, network, bidding
+          options and adjustments, location targeting, campaign end date, and other settings that
+          affect an entire campaign.
+        </p>
+      );
     case 1:
-      return 'What is an ad group anyways?';
+      return (
+        <div>
+        <TextField floatingLabelText="First name" style={style} underlineShow={false} />
+        <Divider />
+        <TextField floatingLabelText="Middle name" style={style} underlineShow={false} />
+        <Divider />
+        <TextField floatingLabelText="Last name" style={style} underlineShow={false} />
+        <Divider />
+        <TextField floatingLabelText="Email address" style={style} underlineShow={false} />
+        <Divider />
+          <p>
+            Ad group status is different than the statuses for campaigns, ads, and keywords, though the
+            statuses can affect each other. Ad groups are contained within a campaign, and each campaign can
+            have one or more ad groups. Within each ad group are ads, keywords, and bids.
+          </p>
+          <p>Something something whatever cool</p>
+        </div>
+      );
     case 2:
-      return 'This is the bit I really care about!';
+      return (
+        <p>
+          Try out different ad text to see what brings in the most customers, and learn how to
+          enhance your ads using features like ad extensions. If you run into any problems with your
+          ads, find out how to tell if they are running and how to resolve approval issues.
+        </p>
+      );
     default:
       return 'You\'re a long way from home sonny jim!';
   }
@@ -112,7 +149,6 @@ const HorizontalLinearStepper = connect( (state) => ({"stepIndex":
   state.stepStore}) )(HorizontalLinearStepper_)
 
 //-------------------------------------------------------------------
-
 
 function stepStore(state = 0, action) {
   if (action.type === "INCREASE_STEP") {
