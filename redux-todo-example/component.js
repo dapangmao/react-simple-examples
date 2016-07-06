@@ -7,6 +7,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import FlatButton from 'material-ui/FlatButton'
 import {List, ListItem} from 'material-ui/List'
 import {Card, CardText} from 'material-ui/Card'
+import TextField from 'material-ui/TextField';
 
 let nextToDoId = 0 // global :shrug:
 
@@ -36,24 +37,23 @@ let nextToDoId = 0 // global :shrug:
 
 
 //------------------------------------------------------------------------------
-function Todo({id, completed, text, dispatch}) {
+function todo({id, completed, text, dispatch}) {
   return (
     <ListItem onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
       style={{textDecoration: completed ? "line-through" : "none"}}
-
       primaryText={text}
       />
   )
 }
 
-const Todo2 = connect()(Todo)
+const Todo = connect()(todo)
 //------------------------------------------------------------------------------
 
 function TodoList({ todos }) {
   return (
   <List>
     {todos.map(todo =>
-      <Todo2
+      <Todo
         key={todo.id}
         {...todo}
       />
@@ -119,21 +119,27 @@ function Footer() {
 // This is a newer 0.14 syntax where ref can be a callback.
 // n.b. no `this` available in a functional/stateless component.
 // Here, we"re making a closure over `input`, defined above.
-function AddTodo({ dispatch }) {
-  let input
+function addTodo({ dispatch, currentText }) {
+  let x
   return (
     <div>
-      <input ref={node => {input = node}} />
+      <TextField ref={node => {x = node}}
+        floatingLabelText="Please enter text here"
+        value = {currentText}
+        onChange={() => {
+            dispatch({"type": "CURRENT_ADD_TODO", "text": x.getValue()})
+        }}
+      />
       <FlatButton onClick={() => {
-        dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": input.value})
-        input.value = ""
+        dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": x.getValue()})
+        dispatch({"type": "CURRENT_ADD_TODO", "text": ""})
       }}
         label = 'Add todo'
       />
     </div>
   )
 }
-const AddTodo2 = connect()(AddTodo)
+const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )(addTodo)
 //------------------------------------------------------------------------------
 const muiTheme = getMuiTheme({
   palette: {
@@ -147,19 +153,15 @@ export default function TodoApp() {
     <MuiThemeProvider muiTheme={muiTheme}>
     <Card>
       <AppBar
-        title="Title"
+        title="Todo App Demo"
         iconClassNameRight="muidocs-icon-navigation-expand-more"
       />
       <CardText>
-      <AddTodo2 />
+      <AddTodo />
       <VisibleTodoList />
-
       <Footer />
       </CardText>
-
     </Card>
-
     </MuiThemeProvider>
-
   )
 }
