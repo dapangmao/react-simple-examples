@@ -24,9 +24,9 @@ function visibilityFilter(state = "SHOW_ALL", action) {
 
 
 function currentAddTodoStore(state = "", action) {
-  if (action.type === "CURRENT_ADD_TODO")
-      return action.text
-  return state
+  if (action.type != "CURRENT_ADD_TODO")
+      return state
+  return action.value
 }
 //
 // 3rd level reducer.

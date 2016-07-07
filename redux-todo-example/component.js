@@ -94,21 +94,32 @@ function Footer() {
 // n.b. no `this` available in a functional/stateless component.
 // Here, we"re making a closure over `input`, defined above.
 function addTodo({ dispatch, currentText }) {
-  let x
+  const handleTextfieldChange = (event) => {
+    dispatch({
+      type: "CURRENT_ADD_TODO",
+      value: event.target.value
+    })
+  }
+  const handleSubmitButtonClick = () => {
+    dispatch({
+      type: "ADD_TODO",
+      id: nextToDoId++,
+      text: currentText
+    })
+    dispatch({
+      type: "CURRENT_ADD_TODO",
+      value: ""
+    })
+  }
   return (
     <div>
-      <TextField ref={node => {x = node}}
+      <TextField
         floatingLabelText="Please enter text here"
-        value = {currentText}
-        onChange={() => {
-            dispatch({"type": "CURRENT_ADD_TODO", "text": x.getValue()})
-        }}
+        value={currentText}
+        onChange={handleTextfieldChange}
       />
-      <FlatButton onClick={() => {
-        dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": x.getValue()})
-        dispatch({"type": "CURRENT_ADD_TODO", "text": ""})
-      }}
-        label = 'Add todo'
+      <FlatButton onClick={handleSubmitButtonClick}
+        label='Add todo'
       />
     </div>
   )
