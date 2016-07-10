@@ -15,7 +15,7 @@ import todoApp from "./reducer"
 
 
 // Create the Redux store from the root reducer.
-const store = createStore(todoApp)
+const store = createStore(todoApp, window.devToolsExtension && window.devToolsExtension())
 
 // react-redux <Provider> uses the React Context feature (`getChildContext`,
 // `childContextTypes`) to inject the store, automatically subscribe and
