@@ -8,6 +8,9 @@ import FlatButton from 'material-ui/FlatButton'
 import {List, ListItem} from 'material-ui/List'
 import {Card, CardText} from 'material-ui/Card'
 import TextField from 'material-ui/TextField';
+import injectTapEventPlugin from 'react-tap-event-plugin'
+injectTapEventPlugin()
+
 
 let nextToDoId = 0 // global :shrug:
 
@@ -39,9 +42,8 @@ TodoList.propTypes = {todos: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired}
 
 function mapStateToTodoListProps(state) {
-  let filter = state.visibilityFilter
-  let todos = state.todos
-  switch (filter) {
+  const {visibilityFilter, todos} = state
+  switch (visibilityFilter) {
     case "SHOW_ALL":
       return {"todos": todos}
     case "SHOW_COMPLETED":
