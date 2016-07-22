@@ -11,16 +11,28 @@ import TextField from 'material-ui/TextField';
 
 let nextToDoId = 0 // global :shrug:
 
-function TodoList({ todos, dispatch }) {
+function todo({id, completed, text, dispatch}) {
   return (
-      <List>
-        {todos.map(x =>
-            <ListItem key={x.id} onClick={() => dispatch({"type": "TOGGLE_TODO", "id": x.id})}
-              style={{textDecoration: x.completed ? "line-through" : "none"}}
-              primaryText={x.text}
-              />
-        )}
-      </List>
+    <ListItem onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
+      style={{textDecoration: completed ? "line-through" : "none"}}
+      primaryText={text}
+      />
+  )
+}
+
+const Todo = connect()(todo)
+//------------------------------------------------------------------------------
+
+function TodoList({ todos }) {
+  return (
+  <List>
+    {todos.map(todo =>
+      <Todo
+        key={todo.id}
+        {...todo}
+      />
+    )}
+  </List>
 )}
 
 TodoList.propTypes = {todos: PropTypes.array.isRequired,
@@ -77,22 +89,34 @@ function Footer() {
   )
 }
 
+//------------------------------------------------------------------------------
 function addTodo({ dispatch, currentText }) {
-  let x
+  const handleTextfieldChange = (event) => {
+    dispatch({
+      type: "CURRENT_ADD_TODO",
+      value: event.target.value
+    })
+  }
+  const handleSubmitButtonClick = () => {
+    dispatch({
+      type: "ADD_TODO",
+      id: nextToDoId++,
+      text: currentText
+    })
+    dispatch({
+      type: "CURRENT_ADD_TODO",
+      value: ""
+    })
+  }
   return (
     <div>
-      <TextField ref={node => {x = node}}
+      <TextField
         floatingLabelText="Please enter text here"
-        value = {currentText}
-        onChange={() => {
-            dispatch({"type": "CURRENT_ADD_TODO", "text": x.getValue()})
-        }}
+        value={currentText}
+        onChange={handleTextfieldChange}
       />
-      <FlatButton onClick={() => {
-        dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": x.getValue()})
-        dispatch({"type": "CURRENT_ADD_TODO", "text": ""})
-      }}
-        label = 'Add todo'
+      <FlatButton onClick={handleSubmitButtonClick}
+        label='Add todo'
       />
     </div>
   )
@@ -104,6 +128,7 @@ const muiTheme = getMuiTheme({
     accent1Color: deepOrange500
   }
 })
+
 
 export default function TodoApp() {
   return (
