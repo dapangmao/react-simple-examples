@@ -8,42 +8,28 @@ import FlatButton from 'material-ui/FlatButton'
 import {List, ListItem} from 'material-ui/List'
 import {Card, CardText} from 'material-ui/Card'
 import TextField from 'material-ui/TextField';
-import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin()
-
 
 let nextToDoId = 0 // global :shrug:
 
-function todo({id, completed, text, dispatch}) {
+function TodoList({ todos, dispatch }) {
   return (
-    <ListItem onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
-      style={{textDecoration: completed ? "line-through" : "none"}}
-      primaryText={text}
-      />
-  )
-}
-
-const Todo = connect()(todo)
-//------------------------------------------------------------------------------
-
-function TodoList({ todos }) {
-  return (
-  <List>
-    {todos.map(todo =>
-      <Todo
-        key={todo.id}
-        {...todo}
-      />
-    )}
-  </List>
+      <List>
+        {todos.map(x =>
+            <ListItem key={x.id} onClick={() => dispatch({"type": "TOGGLE_TODO", "id": x.id})}
+              style={{textDecoration: x.completed ? "line-through" : "none"}}
+              primaryText={x.text}
+              />
+        )}
+      </List>
 )}
 
 TodoList.propTypes = {todos: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired}
 
 function mapStateToTodoListProps(state) {
-  const {visibilityFilter, todos} = state
-  switch (visibilityFilter) {
+  let filter = state.visibilityFilter
+  let todos = state.todos
+  switch (filter) {
     case "SHOW_ALL":
       return {"todos": todos}
     case "SHOW_COMPLETED":
@@ -91,37 +77,22 @@ function Footer() {
   )
 }
 
-//------------------------------------------------------------------------------
-// This is a newer 0.14 syntax where ref can be a callback.
-// n.b. no `this` available in a functional/stateless component.
-// Here, we"re making a closure over `input`, defined above.
 function addTodo({ dispatch, currentText }) {
-  const handleTextfieldChange = (event) => {
-    dispatch({
-      type: "CURRENT_ADD_TODO",
-      value: event.target.value
-    })
-  }
-  const handleSubmitButtonClick = () => {
-    dispatch({
-      type: "ADD_TODO",
-      id: nextToDoId++,
-      text: currentText
-    })
-    dispatch({
-      type: "CURRENT_ADD_TODO",
-      value: ""
-    })
-  }
+  let x
   return (
     <div>
-      <TextField
+      <TextField ref={node => {x = node}}
         floatingLabelText="Please enter text here"
-        value={currentText}
-        onChange={handleTextfieldChange}
+        value = {currentText}
+        onChange={() => {
+            dispatch({"type": "CURRENT_ADD_TODO", "text": x.getValue()})
+        }}
       />
-      <FlatButton onClick={handleSubmitButtonClick}
-        label='Add todo'
+      <FlatButton onClick={() => {
+        dispatch({"type": "ADD_TODO", "id": nextToDoId++, "text": x.getValue()})
+        dispatch({"type": "CURRENT_ADD_TODO", "text": ""})
+      }}
+        label = 'Add todo'
       />
     </div>
   )
@@ -133,7 +104,6 @@ const muiTheme = getMuiTheme({
     accent1Color: deepOrange500
   }
 })
-
 
 export default function TodoApp() {
   return (
