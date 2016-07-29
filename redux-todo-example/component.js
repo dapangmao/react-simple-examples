@@ -11,26 +11,14 @@ import TextField from 'material-ui/TextField';
 
 let nextToDoId = 0 // global :shrug:
 
-function todo({id, completed, text, dispatch}) {
-  return (
-    <ListItem onClick={() => dispatch({"type": "TOGGLE_TODO", "id": id})}
-      style={{textDecoration: completed ? "line-through" : "none"}}
-      primaryText={text}
-      />
-  )
-}
-
-const Todo = connect()(todo)
-//------------------------------------------------------------------------------
-
-function TodoList({ todos }) {
+function TodoList({ todos, dispatch }) {
   return (
   <List>
-    {todos.map(todo =>
-      <Todo
-        key={todo.id}
-        {...todo}
-      />
+    {todos.map( x =>
+      <ListItem key={x.id} onClick={() => dispatch({"type": "TOGGLE_TODO", "id": x.id})}
+        style={{"textDecoration": x.completed ? "line-through" : "none"}}
+        primaryText={x.text}
+        />
     )}
   </List>
 )}
@@ -39,9 +27,8 @@ TodoList.propTypes = {todos: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired}
 
 function mapStateToTodoListProps(state) {
-  let filter = state.visibilityFilter
-  let todos = state.todos
-  switch (filter) {
+  const {visibilityFilter, todos} = state
+  switch (visibilityFilter) {
     case "SHOW_ALL":
       return {"todos": todos}
     case "SHOW_COMPLETED":
@@ -57,10 +44,10 @@ const VisibleTodoList = connect(mapStateToTodoListProps)(TodoList)
 // acitve is defined by the connector
 // children and dispatch defined by global
 // filter is defined by footer
-function Link({ currentFilter, dispatch, filter }) {
-  let str = filter.split("_")[1]
+function Link({ currentFilter, filter, dispatch }) {
+  const str = filter.split("_")[1]
   if (currentFilter === filter)
-    return <span>{str}</span>
+    return <span>{str}{"  "}</span>
   return (
     <a href="#"
        onClick={e => {
@@ -68,7 +55,7 @@ function Link({ currentFilter, dispatch, filter }) {
          dispatch({ "type": "SET_VISIBILITY_FILTER", "filter": filter })
        }}
     >
-      {str}
+      {str}{"  "}
     </a>
   )
 }
@@ -76,15 +63,13 @@ function Link({ currentFilter, dispatch, filter }) {
 const FilterLink = connect( (state) => ({currentFilter: state.visibilityFilter}) )(Link)
 
 function Footer() {
+  const filters = ["SHOW_ALL", "SHOW_ACTIVE", "SHOW_COMPLETED"]
   return (
     <p>
       <b>Show:</b>
-      {" "}
-      <FilterLink filter="SHOW_ALL"/>
-      {" "}
-      <FilterLink filter="SHOW_ACTIVE"/>
-      {" "}
-      <FilterLink filter="SHOW_COMPLETED"/>
+      {filters.map( (x, i) =>
+        <FilterLink key={i} filter={x}/>
+      )}
     </p>
   )
 }
@@ -139,9 +124,9 @@ export default function TodoApp() {
         iconClassNameRight="muidocs-icon-navigation-expand-more"
       />
       <CardText>
-      <AddTodo />
-      <VisibleTodoList />
-      <Footer />
+        <AddTodo />
+        <VisibleTodoList />
+        <Footer />
       </CardText>
     </Card>
     </MuiThemeProvider>
