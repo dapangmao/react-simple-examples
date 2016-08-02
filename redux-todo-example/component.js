@@ -9,7 +9,6 @@ import {List, ListItem} from 'material-ui/List'
 import {Card, CardText} from 'material-ui/Card'
 import TextField from 'material-ui/TextField';
 
-let nextToDoId = 0 // global :shrug:
 
 function TodoList({ todos, dispatch }) {
   return (
@@ -85,7 +84,7 @@ function addTodo({ dispatch, currentText }) {
   const handleSubmitButtonClick = () => {
     dispatch({
       type: "ADD_TODO",
-      id: nextToDoId++,
+      id: new Date().getTime().toString(),
       text: currentText
     })
     dispatch({

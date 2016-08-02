@@ -34,7 +34,7 @@ function currentAddTodoStore(state = "", action) {
 // Remember, no mutation.
 // Initial state is considered (or not, in the ADD_TODO case),
 // and used to construct a new state object, always.
-function todo(state, action) {
+function todo(state={}, action) {
   if (state.id !== action.id)
       return state
   // ES7 has "Object Rest Destructuring"
