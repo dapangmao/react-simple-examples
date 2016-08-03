@@ -1,30 +1,8 @@
 import { combineReducers } from "redux"
-import Parse from "parse"
 
-Parse.initialize("myAppId");
-Parse.serverURL = 'https://www.jhuangs.com/parse'
-const todocloud = Parse.Object.extend("todo")
-
-let initState = []
-let query = new Parse.Query(todocloud)
-
-query.find({
-    success: function(results){
-        results.forEach(x =>
-            initState.push({id: x.get("reduxid"), text: x.get('text'), complete: x.get('complete')})
-        )
-    }
-})
-
-
-function todos(state = initState, action) {
+function todos(state = [], action) {
   if (action.type === "ADD_TODO") {
-    let current = {
-      id: action.id,
-      text: action.text,
-      completed: false
-    }
-    return [...state, current]
+    return [...state, {id: action.id, text: action.text, completed: action.complete}]
   }
   if (action.type === "TOGGLE_TODO")
     return state.map( t => todo(t, action) )
@@ -45,12 +23,7 @@ function currentAddTodoStore(state = "", action) {
       return state
   return action.value
 }
-//
-// 3rd level reducer.
-// Here, `state` refers to a single todo object.
-// Remember, no mutation.
-// Initial state is considered (or not, in the ADD_TODO case),
-// and used to construct a new state object, always.
+
 function todo(state={}, action) {
   if (state.id !== action.id)
       return state

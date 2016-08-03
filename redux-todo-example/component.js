@@ -1,4 +1,4 @@
-import React, {PropTypes} from "react"
+import React, {Component, PropTypes} from "react"
 import { connect } from "react-redux"
 import AppBar from 'material-ui/AppBar';
 import {deepOrange500} from 'material-ui/styles/colors'
@@ -54,10 +54,7 @@ function mapStateToTodoListProps(state) {
 
 const VisibleTodoList = connect(mapStateToTodoListProps)(TodoList)
 
-//------------------------------------------------------------------------------
-// acitve is defined by the connector
-// children and dispatch defined by global
-// filter is defined by footer
+
 function Link({ currentFilter, filter, dispatch }) {
   const str = filter.split("_")[1]
   if (currentFilter === filter)
@@ -102,7 +99,8 @@ function addTodo({ dispatch, currentText }) {
     dispatch({
       type: "ADD_TODO",
       id: _id,
-      text: currentText
+      text: currentText,
+      complete: false
     })
     dispatch({
       type: "CURRENT_ADD_TODO",
@@ -131,27 +129,55 @@ function addTodo({ dispatch, currentText }) {
 }
 const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )(addTodo)
 //------------------------------------------------------------------------------
-const muiTheme = getMuiTheme({
-  palette: {
-    accent1Color: deepOrange500
-  }
-})
 
 
-export default function TodoApp() {
-  return (
-    <MuiThemeProvider muiTheme={muiTheme}>
-    <Card>
-      <AppBar
-        title="Todo App Demo"
-        iconClassNameRight="muidocs-icon-navigation-expand-more"
-      />
-      <CardText>
-        <AddTodo />
-        <VisibleTodoList />
-        <Footer />
-      </CardText>
-    </Card>
-    </MuiThemeProvider>
-  )
+
+//https://github.com/reactjs/redux/issues/916
+ class TodoApp extends Component{
+    constructor(props) {
+      super(props);
+      this.muiTheme = getMuiTheme({
+        palette: { accent1Color: deepOrange500}
+      })
+    }
+
+    loadTodo(dispatch) {
+        const query = new Parse.Query(todocloud)
+        query.find({
+            success: function(results) {
+                results.forEach(x =>
+                    dispatch({
+                        type: "ADD_TODO",
+                        id: x.get("reduxid"),
+                        text: x.get('text'),
+                        complete: x.get('complete')
+                    })
+                )
+            }
+        })
+    }
+
+    componentDidMount() {
+        this.loadTodo(this.props.dispatch)
+     }
+
+    render() {
+        return (
+        <MuiThemeProvider muiTheme={this.muiTheme}>
+        <Card>
+          <AppBar
+            title="Todo App Demo"
+            iconClassNameRight="muidocs-icon-navigation-expand-more"
+          />
+          <CardText>
+            <AddTodo />
+            <VisibleTodoList />
+            <Footer />
+          </CardText>
+        </Card>
+        </MuiThemeProvider>
+        )
+    }
 }
+
+export default connect()(TodoApp)
