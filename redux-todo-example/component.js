@@ -7,8 +7,12 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import FlatButton from 'material-ui/FlatButton'
 import {List, ListItem} from 'material-ui/List'
 import {Card, CardText} from 'material-ui/Card'
-import TextField from 'material-ui/TextField';
+import TextField from 'material-ui/TextField'
+import Parse from "parse"
 
+Parse.initialize("myAppId");
+Parse.serverURL = 'https://www.jhuangs.com/parse'
+const todocloud = Parse.Object.extend("todo")
 
 function TodoList({ todos, dispatch }) {
   return (
@@ -68,7 +72,8 @@ function Footer() {
       <b>Show:</b>
       {filters.map( (x, i) =>
         <FilterLink key={i} filter={x}/>
-      )}
+        )
+      }
     </p>
   )
 }
@@ -82,15 +87,22 @@ function addTodo({ dispatch, currentText }) {
     })
   }
   const handleSubmitButtonClick = () => {
+    let _id = new Date().getTime().toString()
     dispatch({
       type: "ADD_TODO",
-      id: new Date().getTime().toString(),
+      id: _id,
       text: currentText
     })
     dispatch({
       type: "CURRENT_ADD_TODO",
       value: ""
     })
+    let payload = new todocloud()
+    payload.save({
+      reduxid: _id,
+      text: currentText
+    })
+
   }
   return (
     <div>
