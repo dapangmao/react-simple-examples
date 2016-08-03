@@ -1,6 +1,23 @@
 import { combineReducers } from "redux"
+import Parse from "parse"
 
-function todos(state = [], action) {
+Parse.initialize("myAppId");
+Parse.serverURL = 'https://www.jhuangs.com/parse'
+const todocloud = Parse.Object.extend("todo")
+
+let initState = []
+let query = new Parse.Query(todocloud)
+
+query.find({
+    success: function(results){
+        results.forEach(x =>
+            initState.push({id: x.get("reduxid"), text: x.get('text'), complete: x.get('complete')})
+        )
+    }
+})
+
+
+function todos(state = initState, action) {
   if (action.type === "ADD_TODO") {
     let current = {
       id: action.id,

@@ -15,16 +15,27 @@ Parse.serverURL = 'https://www.jhuangs.com/parse'
 const todocloud = Parse.Object.extend("todo")
 
 function TodoList({ todos, dispatch }) {
-  return (
-  <List>
-    {todos.map( x =>
-      <ListItem key={x.id} onClick={() => dispatch({"type": "TOGGLE_TODO", "id": x.id})}
-        style={{"textDecoration": x.completed ? "line-through" : "none"}}
-        primaryText={x.text}
-        />
-    )}
-  </List>
-)}
+    return (
+        <List>
+            {todos.map( x =>
+              <ListItem key={x.id} onClick={() => {
+                  dispatch({"type": "TOGGLE_TODO", "id": x.id})
+                  let query = new Parse.Query(todocloud)
+                  query.equalTo("reduxid", x.id)
+                  query.first().then(obj => {
+                      let prevComplete = obj.get('complete')
+                      obj.set('complete', !prevComplete)
+                      obj.save()
+                  })
+                }
+              }
+                style={{"textDecoration": x.completed ? "line-through" : "none"}}
+                primaryText={x.text}
+                />
+            )}
+        </List>
+    )
+}
 
 TodoList.propTypes = {todos: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired}
@@ -100,7 +111,8 @@ function addTodo({ dispatch, currentText }) {
     let payload = new todocloud()
     payload.save({
       reduxid: _id,
-      text: currentText
+      text: currentText,
+      complete: false
     })
 
   }
