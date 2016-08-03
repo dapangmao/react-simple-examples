@@ -20,9 +20,8 @@ function TodoList({ todos, dispatch }) {
             {todos.map( x =>
               <ListItem key={x.id} onClick={() => {
                   dispatch({"type": "TOGGLE_TODO", "id": x.id})
-                  let query = new Parse.Query(todocloud)
-                  query.equalTo("reduxid", x.id)
-                  query.first().then(obj => {
+                  const query = new Parse.Query(todocloud)
+                  query.equalTo("reduxid", x.id).first().then(obj => {
                       let prevComplete = obj.get('complete')
                       obj.set('complete', !prevComplete)
                       obj.save()
@@ -129,8 +128,6 @@ function addTodo({ dispatch, currentText }) {
 }
 const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )(addTodo)
 //------------------------------------------------------------------------------
-
-
 
 //https://github.com/reactjs/redux/issues/916
  class TodoApp extends Component{
