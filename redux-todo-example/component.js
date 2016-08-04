@@ -10,6 +10,7 @@ import {Card, CardText} from 'material-ui/Card'
 import TextField from 'material-ui/TextField'
 import Parse from "parse"
 
+
 Parse.initialize("myAppId");
 Parse.serverURL = 'https://www.jhuangs.com/parse'
 const todocloud = Parse.Object.extend("todo")
@@ -130,7 +131,7 @@ const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )
 //------------------------------------------------------------------------------
 
 //https://github.com/reactjs/redux/issues/916
- class TodoApp extends Component{
+ class Todo_ extends Component{
     constructor(props) {
       super(props);
       this.muiTheme = getMuiTheme({
@@ -177,4 +178,25 @@ const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )
     }
 }
 
-export default connect()(TodoApp)
+
+const Todo = connect()(Todo_)
+
+
+ class TodoApp extends Component{
+
+     componentWillMount() {
+         Parse.User.logIn("pig", "pig")
+     }
+     render () {
+         if (!Parse.User.current())
+             return (<div>sorry</div>)
+         return (
+             <div>
+                 <Todo/>
+             </div>
+         )
+     }
+}
+
+
+export default TodoApp
