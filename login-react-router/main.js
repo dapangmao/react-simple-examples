@@ -1,6 +1,6 @@
 import React, { createClass } from 'react'
 import { render } from 'react-dom'
-import { Router, Route, IndexRoute, browserHistory, Link, withRouter } from 'react-router'
+import { Router, Route, browserHistory, Link, withRouter } from 'react-router'
 import Parse from 'parse'
 
 
@@ -11,10 +11,34 @@ Parse.serverURL = 'https://www.jhuangs.com/parse'
 function App(props) {
   return (
     <div>
+      <ul>
+
+          {Parse.User.current() ? (
+            <div>
+            <li><Link to="/logout">Log out</Link> </li>
+            <li><Link to="/page">Top secret</Link></li>
+            </div>
+          ) : (
+            <li><Link to="/login">Sign in</Link></li>
+          )}
+
+      </ul>
       {props.children}
     </div>
   )
 }
+
+
+const Logout = React.createClass({
+  componentDidMount() {
+    Parse.User.logOut()
+  },
+
+  render() {
+    return <p>You are now logged out</p>
+  }
+})
+
 
 const Form = withRouter(
   createClass({
@@ -49,8 +73,6 @@ const Form = withRouter(
     render() {
       return (
         <form onSubmit={this.submitAction}>
-          <p>Token is <em>pancakes</em></p>
-
           <label><input placeholder="username" value={this.state.value}
             onChange={this.handleValueChange}/></label>
           <label><input placeholder="password" value={this.state.pass}
@@ -87,7 +109,8 @@ function requireCredentials(nextState, replace, next) {
 render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
-      <IndexRoute component={Form} />
+      <Route path="login" component={Form} />
+      <Route path="logout" component={Logout} />
       <Route path="page" component={Page} onEnter={requireCredentials}/>
       <Route path="error" component={ErrorPage}/>
     </Route>
