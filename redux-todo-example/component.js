@@ -106,14 +106,8 @@ function addTodo({ dispatch, currentText }) {
       type: "CURRENT_ADD_TODO",
       value: ""
     })
-    /*
-var Note = Parse.Object.extend("Note");
-var privateNote = new Note();
-privateNote.set("content", "This note is private!");
-privateNote.setACL(new Parse.ACL(Parse.User.current()));
-privateNote.save();
-    */
     let payload = new todocloud()
+    payload.setACL(new Parse.ACL(Parse.User.current()))
     payload.save({
       reduxid: _id,
       text: currentText,
@@ -148,8 +142,8 @@ const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )
 
     loadTodo(dispatch) {
         const query = new Parse.Query(todocloud)
-        query.find({
-            success: function(results) {
+        query.find().then(
+            results =>
                 results.forEach(x =>
                     dispatch({
                         type: "ADD_TODO",
@@ -158,8 +152,8 @@ const AddTodo = connect( (state) => ({currentText: state.currentAddTodoStore}) )
                         complete: x.get('complete')
                     })
                 )
-            }
-        })
+            )
+
     }
 
     componentDidMount() {
@@ -190,7 +184,6 @@ const Todo = connect()(Todo_)
 
 
  class TodoApp extends Component{
-
      componentWillMount() {
          Parse.User.logIn("pig", "pig")
      }
