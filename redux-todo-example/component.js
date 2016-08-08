@@ -106,6 +106,13 @@ function addTodo({ dispatch, currentText }) {
       type: "CURRENT_ADD_TODO",
       value: ""
     })
+    /*
+var Note = Parse.Object.extend("Note");
+var privateNote = new Note();
+privateNote.set("content", "This note is private!");
+privateNote.setACL(new Parse.ACL(Parse.User.current()));
+privateNote.save();
+    */
     let payload = new todocloud()
     payload.save({
       reduxid: _id,
