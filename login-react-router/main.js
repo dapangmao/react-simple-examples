@@ -28,13 +28,14 @@ const Form = withRouter(
 
     submitAction(event) {
       event.preventDefault()
-      this.props.router.push({
-        pathname: '/page',
-        query: {
-          username: this.state.value,
-          password: this.state.pass
-        }
-      })
+      Parse.User.logIn(this.state.value, this.state.pass).then(
+        () => this.props.router.push({
+                pathname: '/page'
+              }),
+        () => this.props.router.push({
+                pathname: '/error'
+              })
+      )
     },
 
     handleValueChange(event) {
@@ -56,7 +57,7 @@ const Form = withRouter(
             onChange={this.handlePassChange}/></label>
 
           <button type="submit">Submit the thing</button>
-          <p><Link to="/page?qsparam=pancakes">Or authenticate via URL</Link></p>
+          <p><Link to="/page">Or authenticate via URL</Link></p>
           <p><Link to="/page?qsparam=bacon">Or try failing to authenticate via URL</Link></p>
         </form>
       )
@@ -65,7 +66,7 @@ const Form = withRouter(
 )
 
 function Page() {
-  return <h1>Hey, I see you are authenticated. Welcome!</h1>
+  return <h1>This is the top secret you are looking for!</h1>
 }
 
 function ErrorPage() {
@@ -73,22 +74,15 @@ function ErrorPage() {
 }
 
 function requireCredentials(nextState, replace, next) {
-    const query = nextState.location.query
-    if (query.username && query.password) {
-      Parse.User.logIn(query.username, query.password)
-        .then(
-          () => next(),
-          () => {
-            replace('/error')
-            next()
-          }
-        )
+    // nextState is required to use replace
+    if (Parse.User.current()) {
+        next()
     } else {
+      console.log('login failed')
       replace('/error')
       next()
     }
 }
-
 
 render((
   <Router history={browserHistory}>
