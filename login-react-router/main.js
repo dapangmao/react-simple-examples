@@ -9,11 +9,12 @@ Parse.serverURL = 'https://www.jhuangs.com/parse'
 
 
 function App(props) {
+  const loggedin = Parse.User.current()
   return (
     <div>
       <ul>
 
-          {Parse.User.current() ? (
+          {loggedin ? (
             <div>
             <li><Link to="/logout">Log out</Link> </li>
             <li><Link to="/page">Top secret</Link></li>
@@ -23,7 +24,7 @@ function App(props) {
           )}
 
       </ul>
-      {props.children}
+      {props.children || <p>You are {!loggedin && 'not'} logged in.</p>}
     </div>
   )
 }
