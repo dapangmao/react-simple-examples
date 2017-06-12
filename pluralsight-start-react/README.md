@@ -1,6 +1,7 @@
 ### 2017 advancement
 
 - No propTypes are forced
+- Everything is ES6+
 - One JS file is enough
 - No Redux required
 - Use CSS directly with `className`
