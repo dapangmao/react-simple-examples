@@ -2,9 +2,9 @@ import React, {Component} from 'react'
 import "./App.css"
 
 
-const Board = (props) => {
+function Board(props) {
 
-    const boardRow = (i) => {
+    function boardRow(i) {
         const arr = [i, i+1, i+2];
         return (
             <div className="board-row">
