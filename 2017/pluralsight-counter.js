@@ -1,28 +1,24 @@
 import React, {Component} from 'react'
 
 
-const Button = (props) => {
-
-    return (
-        <button onClick={() => props.onClickFunction(props.incrementValue)}>
-            +{props.incrementValue}
-        </button>
-    )
-};
+const Button = (props) => (
+    <button onClick={() => props.onClickFunction(props.incrementValue)}>
+        +{props.incrementValue}
+    </button>
+);
 
 
-const Result = (props) => {
-    return (
-        <div> {props.counter} </div>
-    )
-};
+const Result = (props) => (
+    <div> {props.counter} </div>
+);
+
 
 class App extends Component {
     state = {counter: 0};
 
     incrementCounter = (x) => {
         this.setState(
-            (prevState) => (
+            prevState => (
                 {counter: prevState.counter + x}
             )
         )
