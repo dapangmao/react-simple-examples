@@ -10,3 +10,11 @@
   - `start`, `build` and `test` commands by default
 - High order function avoids long lines to transport Props
 
+
+#### Notice 
+
+- Scopes
+  - within function
+  - within instance
+  - global
+
