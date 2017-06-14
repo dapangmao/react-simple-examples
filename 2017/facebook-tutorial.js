@@ -1,30 +1,72 @@
+// body {
+//     font: 14px "Century Gothic", Futura, sans-serif;
+//     margin: 20px;
+// }
+//
+// ol, ul {
+//     padding-left: 30px;
+// }
+//
+// .board-row:after {
+//     clear: both;
+//     content: "";
+//     display: table;
+// }
+//
+// .status {
+//     margin-bottom: 10px;
+// }
+//
+// .square {
+//     background: #fff;
+//     border: 1px solid #999;
+//     float: left;
+//     font-size: 24px;
+//     font-weight: bold;
+//     line-height: 34px;
+//     height: 34px;
+//     margin-right: -1px;
+//     margin-top: -1px;
+//     padding: 0;
+//     text-align: center;
+//     width: 34px;
+// }
+//
+// .square:focus {
+//     outline: none;
+// }
+//
+// .kbd-navigation .square:focus {
+//     background: #ddd;
+// }
+//
+// .game {
+//     display: flex;
+//     flex-direction: row;
+// }
+//
+// .game-info {
+//     margin-left: 20px;
+// }
+
 import React, {Component} from 'react'
 import "./App.css"
 
-
-function Board(props) {
-
-    function boardRow(i) {
-        const arr = [i, i+1, i+2];
-        return (
-            <div className="board-row">
-                {arr.map(i =>
-                    <button className="square" key={i} onClick={() => props.onClick(i)}>
-                        {props.squares[i]}
-                    </button>
-                )}
-            </div>
-        )
-    };
-
-    return (
-        <div>
-            {boardRow(0)}
-            {boardRow(3)}
-            {boardRow(6)}
-        </div>
-    )
-};
+const Board = (props) => (
+    <div>
+        {
+            [0, 3, 6].map(i => (
+                <div className="board-row" key={i}>
+                    {[i, i + 1, i + 2].map(j =>
+                        <button className="square" key={j} onClick={() => props.onClick(j)}>
+                            {props.squares[j]}
+                        </button>
+                    )}
+                </div>
+            ))
+        }
+    </div>
+);
 
 class App extends Component {
     state = {
@@ -63,15 +105,12 @@ class App extends Component {
     }
 
     moves() {
-        return this.state.history.map((step, i) => {
-                return (
-                    <li key={i}>
-                        <a href="#" onClick={() => this.jumpTo(i)}>
-                            {i > 0 ? "Move #" + i : "Game start"}
-                        </a>
-                    </li>
-                )
-            }
+        return this.state.history.map((step, i) =>
+            <li key={i}>
+                <a href="#" onClick={() => this.jumpTo(i)}>
+                    {i > 0 ? "Move #" + i : "Game start"}
+                </a>
+            </li>
         )
     }
 
@@ -118,5 +157,4 @@ function calculateWinner(squares) {
 }
 
 export default App;
-
 
