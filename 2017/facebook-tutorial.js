@@ -55,7 +55,7 @@ import "./App.css"
 const Board = (props) => (
     <div>
         {
-            [0, 3, 6].map(i => (
+            [0, 3, 6].map(i =>
                 <div className="board-row" key={i}>
                     {[i, i + 1, i + 2].map(j =>
                         <button className="square" key={j} onClick={() => props.onClick(j)}>
@@ -63,7 +63,7 @@ const Board = (props) => (
                         </button>
                     )}
                 </div>
-            ))
+            )
         }
     </div>
 );
@@ -156,5 +156,5 @@ function calculateWinner(squares) {
     return null;
 }
 
-export default App;
+export default App
 
