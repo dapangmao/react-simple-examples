@@ -53,7 +53,7 @@ import React, {Component} from 'react'
 import "./App.css"
 
 const Board = (props) => (
-    <div>
+    <div className="game-board">
         {
             [0, 3, 6].map(i =>
                 <div className="board-row" key={i}>
@@ -121,12 +121,10 @@ class App extends Component {
 
         return (
             <div className="game">
-                <div className="game-board">
-                    <Board
-                        squares={current.squares}
-                        onClick={i => this.handleClick(i)}
-                    />
-                </div>
+                <Board
+                    squares={current.squares}
+                    onClick={i => this.handleClick(i)}
+                />
                 <div className="game-info">
                     <div>{status}</div>
                     <ol>{this.moves()}</ol>
