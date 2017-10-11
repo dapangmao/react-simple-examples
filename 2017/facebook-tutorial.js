@@ -98,7 +98,7 @@ class App extends Component {
     state = {
         history: [
             {
-                squares: Array(9).fill(null)
+                squares: new Array(9).fill(null)
             }
         ],
         stepNumber: 0,
@@ -127,7 +127,7 @@ class App extends Component {
     jumpTo = (step) => {
         this.setState({
             stepNumber: step,
-            xIsNext: step % 2 ? false : true  // history will not get impact
+            xIsNext: (step % 2) === 0  
         })
     };
 
