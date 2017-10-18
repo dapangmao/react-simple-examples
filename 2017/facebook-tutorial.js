@@ -84,8 +84,11 @@ const Moves = (props) => (
 const Status = (props) => {
     const current = props.state.history[props.state.stepNumber];
     const winner = calculateWinner(current.squares);
-    const status = winner ? "Winner: " + winner : "Next player: " + (props.state.xIsNext ? "X" : "O");
-
+    let status = "";
+    if (winner)
+        status = `Winner is ${winner}`;
+    else
+        status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     return (
         <div>
             {status}
