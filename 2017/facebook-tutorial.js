@@ -48,7 +48,6 @@
 // .game-info {
 //     margin-left: 20px;
 // }
-
 import React, {Component} from 'react'
 import "./App.css"
 
@@ -81,23 +80,7 @@ const Moves = (props) => (
     </ol>
 );
 
-const Status = (props) => {
-    const current = props.state.history[props.state.stepNumber];
-    const winner = calculateWinner(current.squares);
-    let status = "";
-    if (winner)
-        status = `Winner is ${winner}`;
-    else
-        status = "Next player: " + (this.state.xIsNext ? "X" : "O");
-    return (
-        <div>
-            {status}
-        </div>
-    )
-};
-
-
-class App extends Component {
+export default class extends Component {
     state = {
         history: [
             {
@@ -107,7 +90,7 @@ class App extends Component {
         stepNumber: 0,
         xIsNext: true
     };
-    
+
     // The two blocks below are the functions that need to be passed to the children components
     handleClick = (i) => {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -130,8 +113,21 @@ class App extends Component {
     jumpTo = (step) => {
         this.setState({
             stepNumber: step,
-            xIsNext: (step % 2) === 0  
+            xIsNext: (step % 2) === 0
         })
+    };
+
+    renderStatus() {
+        const current = this.state.history[this.state.stepNumber];
+        const winner = calculateWinner(current.squares);
+        let status = "Next player: " + (this.state.xIsNext ? "X" : "O")
+        if (winner)
+            status = "Winner: " + winner
+        return (
+            <div>
+                {status}
+            </div>
+        )
     };
 
     render() {
@@ -142,14 +138,13 @@ class App extends Component {
                     onClick={this.handleClick}
                 />
                 <div className="game-info">
-                    <Status state={this.state}/>
+                    {this.renderStatus()}
                     <Moves history={this.state.history} jumpTo={this.jumpTo}/>
                 </div>
-            </div >
+            </div>
         );
     }
 }
-
 
 function calculateWinner(squares) {
     const lines = [
@@ -170,6 +165,4 @@ function calculateWinner(squares) {
     }
     return null;
 }
-
-export default App
 
