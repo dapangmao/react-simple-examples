@@ -70,20 +70,20 @@ const SearchResults = (props) => {
         props.setActiveHouse(h)
     }
 
+    const Row = (h, i) => (
+        <tr onClick={setActive(h)} key={i}>
+            <td>{h.address}</td>
+            <td>{h.price}</td>
+            <td>{h.likes}</td>
+        </tr>
+    )
+
     return (
         <div className="mt-2">
             <h4>Results for {props.country}:</h4>
             <table className="table table-hover">
                 <tbody>
-                {
-                    props.filteredHouses.map((h, i) =>
-                        <tr onClick={setActive(h)} key={i}>
-                            <td>{h.address}</td>
-                            <td>{h.price}</td>
-                            <td>{h.likes}</td>
-                        </tr>
-                    )
-                }
+                {props.filteredHouses.map((h, i) => Row(h, i))}
                 </tbody>
             </table>
         </div>
