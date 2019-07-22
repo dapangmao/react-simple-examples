@@ -2,55 +2,60 @@
 - warp everything under class
 
 ```javascript
+import React from 'react';
+import './App.css';
+
 class Board extends React.Component {
   renderSquare(i) {
     const value = this.props.squares[i];
     return (
-      <button className="square" onClick={() => this.props.onClick(i)}>
-        {value}
-      </button>
+        <button className="square" onClick={() => this.props.onClick(i)}>
+          {value}
+        </button>
     );
   }
 
   render() {
     return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+        <div className="game-board">
+          <div>
+            <div className="board-row">
+              {this.renderSquare(0)}
+              {this.renderSquare(1)}
+              {this.renderSquare(2)}
+            </div>
+            <div className="board-row">
+              {this.renderSquare(3)}
+              {this.renderSquare(4)}
+              {this.renderSquare(5)}
+            </div>
+            <div className="board-row">
+              {this.renderSquare(6)}
+              {this.renderSquare(7)}
+              {this.renderSquare(8)}
+            </div>
+          </div>
         </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
     );
   }
 }
 
 class Game extends React.Component {
-    state = {
-      history: [
-        {
-          squares: Array(9).fill(null)
-        }
-      ],
-      stepNumber: 0,
-      xIsNext: true
-    };
+  state = {
+    history: [
+      {
+        squares: Array(9).fill(null)
+      }
+    ],
+    stepNumber: 0,
+    xIsNext: true
+  };
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
+    if (Game.calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
@@ -72,20 +77,20 @@ class Game extends React.Component {
     });
   }
 
-   moves(history) {
-     return history.map((step, move) => {
-        const desc = move ?
+  moves(history) {
+    return history.map((step, move) => {
+      const desc = move ?
           'Go to move #' + move :
           'Go to game start';
-        return (
+      return (
           <li key={move}>
             <button onClick={() => this.jumpTo(move)}>{desc}</button>
           </li>
-        );
-      });
-   }
-   
-  calculateWinner(squares) {
+      );
+    });
+  }
+
+  static calculateWinner(squares) {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -105,10 +110,19 @@ class Game extends React.Component {
     return null;
   }
 
+  static renderInfo(status, steps) {
+    return (
+        <div className="game-info">
+          <div>{status}</div>
+          <ol>{steps}</ol>
+        </div>
+    )
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = this.calculateWinner(current.squares);
+    const winner = Game.calculateWinner(current.squares);
 
     let status;
     if (winner) {
@@ -118,23 +132,13 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
-        <div className="game-board">
-          <Board
-            squares={current.squares}
-            onClick={i => this.handleClick(i)}
-          />
+        <div className="game">
+          <Board squares={current.squares} onClick={i => this.handleClick(i)}/>
+          {Game.renderInfo(status, this.moves(history))}
         </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{this.moves(history)}</ol>
-        </div>
-      </div>
     );
   }
 }
 
-// ========================================
 
-ReactDOM.render(<Game />, document.getElementById("root"));
-
+export default Game;
