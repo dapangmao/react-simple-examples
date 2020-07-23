@@ -6,7 +6,7 @@
     "test": "webpack-dev-server --config=webpack.config.js"
   },
   "dependencies": {
-    "parse": "^1.9.0",
+    "parse": "^2.15.0",
     "react": "15.0.2",
     "react-dom": "15.0.2",
     "redux": "3.5.2"
